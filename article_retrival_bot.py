@@ -71,7 +71,7 @@ with pd.ExcelWriter(path+"FINAL_result_test.xlsx") as writer:
                 date = pd.to_datetime(original['Trade Date'])[i]
                 month_min, day, yr = back_month(date, back=3) # goes back
                 yr_max = yr
-                month_max = (month_min + 2)
+                month_max = month_min + 2
 
                 if 10 < month_min < 13:
                     month_max = month_min - 12 + 2 # max month is 2 months after min
