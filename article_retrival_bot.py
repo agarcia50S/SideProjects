@@ -52,6 +52,9 @@ def get_sheet_names_xlsx(filepath):
     wb = load_workbook(filepath, read_only=True, keep_links=False)
     return wb.sheetnames
 
+def make_url(ticker, add_param, m_min, d_min, y_min, m_max, d_max, y_max):
+    return f'https://www.google.com/search?q={ticker}{add_param}&rlz=1C1CHBF_enUS1024US1025&biw=1564&bih=932&sxsrf=ALiCzsaGPneyPAo-kyllnxBBtXe-FGWorQ%3A1665448856808&source=lnt&tbs=sbd%3A1%2Ccdr%3A1%2Ccd_min%3A{m_min}%2F{d_min}%2F{y_min}%2Ccd_max%3A{m_max}%2F{d_max}%2F{y_max}&tbm=nws'
+
 path = 'C:/Users/agarc/AbbyCode/data/'
 #%%
 sheet_names = get_sheet_names_xlsx(path+'result_test.xlsx') # exclude jan / feb
