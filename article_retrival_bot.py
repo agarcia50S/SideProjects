@@ -79,7 +79,7 @@ with pd.ExcelWriter(path+"FINAL_result_test.xlsx") as writer:
                 elif month_min == 10:
                     yr_max -= 1
 
-                url = f'https://www.google.com/search?q={tick}+stock&rlz=1C1CHBF_enUS1024US1025&biw=1564&bih=932&sxsrf=ALiCzsaGPneyPAo-kyllnxBBtXe-FGWorQ%3A1665448856808&source=lnt&tbs=sbd%3A1%2Ccdr%3A1%2Ccd_min%3A{month_min}%2F{day}%2F{yr}%2Ccd_max%3A{month_max}%2F{day}%2F{yr_max}&tbm=nws'
+                url = make_url(tick, '+stock', month_min, day, yr, month_max, day, yr_max)
                 # print(url[181:]) # check dates in url
                 wd.get(url)
                 sleep(random.uniform(1, 4))
