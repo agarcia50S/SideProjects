@@ -70,7 +70,7 @@ with pd.ExcelWriter(path+"FINAL_result_test.xlsx") as writer:
             for i, tick in enumerate(original['COMPANY (TICKER)']):
                 date = pd.to_datetime(original['Trade Date'])[i]
                 month_min, day, yr = back_month(date, back=3) # goes back
-                yr_min, yr_max = yr, yr
+                yr_max = yr
                 month_max = (month_min + 2)
 
                 if 10 < month_min < 13:
