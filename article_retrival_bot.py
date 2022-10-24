@@ -87,18 +87,11 @@ with pd.ExcelWriter(path+"FINAL_result_test.xlsx") as writer:
             pub_dates = []
             c = 0
             for i, tick in enumerate(original['COMPANY (TICKER)']):
-                date = pd.to_datetime(original['Trade Date'])[i]
-                month_min, day, yr = back_month(date, back=3) # goes back
-                yr_max = yr
-                month_max = month_min + 2
+                date_min, date_max = make_date_range('Trade Date', i)
+                month_min, day_min, yr_min = date_min
+                month_max, day_max, yr_max = date_max
 
-                if 10 < month_min < 13:
-                    month_max = month_min - 12 + 2 # max month is 2 months after min
-                    yr_max -= 1
-                elif month_min == 10:
-                    yr_max -= 1
-
-                url = make_url(tick, '+stock', month_min, day, yr, month_max, day, yr_max)
+                url = make_url(tick, '+stock', month_min, day_min, yr_min, month_max, day_max, yr_max)
                 # print(url[181:]) # check dates in url
                 wd.get(url)
                 sleep(random.uniform(1, 4))
