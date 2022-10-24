@@ -52,6 +52,25 @@ def get_sheet_names_xlsx(filepath):
     wb = load_workbook(filepath, read_only=True, keep_links=False)
     return wb.sheetnames
 
+def make_date_range(date_col, val_indx, frwd_shift=2, back_shift=3):
+    if month_max > back_shift:
+        raise ValueError('Shift is too large. It must be <= back_shift')
+
+    date = pd.to_datetime(original[date_col])[val_indx]
+    month_min, day, yr = back_month(date, back=back_shift) # goes back
+    
+    if 10 < month_min < 13:
+        month_max = month_min - 12 + frwd_shift # max month is 2 months after min
+        yr_min = yr - 1
+        return (month_min, day, yr_min), (month_max, day, yr)
+    elif month_min == 10:
+        month_max = month_min + frwd_shift
+        yr_min = yr - 1
+        return (month_min, day, yr_min), (month_max, day, yr)
+    else:
+        month_max = month_min + frwd_shift
+        return (month_min, day, yr), (month_max, day, yr)
+
 def make_url(ticker, add_param, m_min, d_min, y_min, m_max, d_max, y_max):
     return f'https://www.google.com/search?q={ticker}{add_param}&rlz=1C1CHBF_enUS1024US1025&biw=1564&bih=932&sxsrf=ALiCzsaGPneyPAo-kyllnxBBtXe-FGWorQ%3A1665448856808&source=lnt&tbs=sbd%3A1%2Ccdr%3A1%2Ccd_min%3A{m_min}%2F{d_min}%2F{y_min}%2Ccd_max%3A{m_max}%2F{d_max}%2F{y_max}&tbm=nws'
 
