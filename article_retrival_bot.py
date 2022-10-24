@@ -56,7 +56,7 @@ def make_date_range(date_col, val_indx, frwd_shift=2, back_shift=3):
     if frwd_shift > back_shift:
         raise ValueError('Shift is too large. It must be <= back_shift')
 
-    date = pd.to_datetime(original[date_col])[val_indx]
+    date = pd.to_datetime(date_col)[val_indx]
     month_min, day, yr = back_month(date, back=back_shift) # goes back
     
     if 10 < month_min < 13:
