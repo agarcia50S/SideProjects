@@ -74,45 +74,44 @@ def make_date_range(date_col, val_indx, frwd_shift=2, back_shift=3):
 def make_url(ticker, add_param, m_min, d_min, y_min, m_max, d_max, y_max):
     return f'https://www.google.com/search?q={ticker}{add_param}&rlz=1C1CHBF_enUS1024US1025&biw=1564&bih=932&sxsrf=ALiCzsaGPneyPAo-kyllnxBBtXe-FGWorQ%3A1665448856808&source=lnt&tbs=sbd%3A1%2Ccdr%3A1%2Ccd_min%3A{m_min}%2F{d_min}%2F{y_min}%2Ccd_max%3A{m_max}%2F{d_max}%2F{y_max}&tbm=nws'
 
-path = 'C:/Users/agarc/AbbyCode/data/'
-#%%
-sheet_names = get_sheet_names_xlsx(path+'result_test.xlsx') # exclude jan / feb
-wd = webdriver.Chrome()
-with pd.ExcelWriter(path+"FINAL_result_test.xlsx") as writer:
+if __name__ == '__main__':
+    path = 'C:/Users/agarc/AbbyCode/data/'
+    #%%
+    sheet_names = get_sheet_names_xlsx(path+'result_test.xlsx') # exclude jan / feb
+    wd = webdriver.Chrome()
+    with pd.ExcelWriter(path+"FINAL_result_test.xlsx") as writer:
 
-    for name in sheet_names:
-        original = pd.read_excel(path+'result_test.xlsx', sheet_name=name)
-        try:
-            links = []
-            pub_dates = []
-            c = 0
-            for i, tick in enumerate(original['COMPANY (TICKER)']):
+        for name in sheet_names:
+            original = pd.read_excel(path+'result_test.xlsx', sheet_name=name)
+            try:
+                links = []
+                pub_dates = []
+                c = 0
+                for i, tick in enumerate(original['COMPANY (TICKER)']):
                     date_min, date_max = make_date_range(original['Trade Date'], i)
                     month_min, day_min, yr_min = date_min
                     month_max, day_max, yr_max = date_max
 
-                url = make_url(tick, '+stock', month_min, day_min, yr_min, month_max, day_max, yr_max)
-                # print(url[181:]) # check dates in url
-                wd.get(url)
-                sleep(random.uniform(1, 4))
+                    url = make_url(tick, '+stock', month_min, day_min, yr_min, month_max, day_max, yr_max)
+                    # print(url[181:]) # check dates in url
+                    wd.get(url)
+                    sleep(random.uniform(1, 4))
 
-                page = wd.page_source
-                link_elmnt = find_elements(page, tag='a', attr='class', val='WlydOe')
-                try:
-                    article_link = link_elmnt.get('href')
-                except (AttributeError) as error:
-                    print(error, '\n will append No Results instead of link')
-                    links.append('No Results')
-                    pub_dates.append(None)
-                else:
-                    links.append(article_link) 
-                    pub_dates.append(link_elmnt.find('div', attrs={'class':'OSrXXb ZE0LJd YsWzw'}).text)    
-                    
-        finally:
-            wd.quit()
+                    page = wd.page_source
+                    link_elmnt = find_elements(page, tag='a', attr='class', val='WlydOe')
+                    try:
+                        article_link = link_elmnt.get('href')
+                    except (AttributeError) as error:
+                        print(error, '\n will append No Results instead of link')
+                        links.append('No Results')
+                        pub_dates.append(None)
+                    else:
+                        links.append(article_link) 
+                        pub_dates.append(link_elmnt.find('div', attrs={'class':'OSrXXb ZE0LJd YsWzw'}).text)    
+                        
+            finally:
+                wd.quit()
 
-        original['Links'] = links
-        original['Link Publish Date'] = pub_dates
-        original.to_excel(writer, sheet_name=name, index=False)
-
-#%%
+            original['Links'] = links
+            original['Link Publish Date'] = pub_dates
+            original.to_excel(writer, sheet_name=name, index=False)
