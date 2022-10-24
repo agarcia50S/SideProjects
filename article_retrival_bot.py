@@ -87,9 +87,9 @@ with pd.ExcelWriter(path+"FINAL_result_test.xlsx") as writer:
             pub_dates = []
             c = 0
             for i, tick in enumerate(original['COMPANY (TICKER)']):
-                date_min, date_max = make_date_range('Trade Date', i)
-                month_min, day_min, yr_min = date_min
-                month_max, day_max, yr_max = date_max
+                    date_min, date_max = make_date_range(original['Trade Date'], i)
+                    month_min, day_min, yr_min = date_min
+                    month_max, day_max, yr_max = date_max
 
                 url = make_url(tick, '+stock', month_min, day_min, yr_min, month_max, day_max, yr_max)
                 # print(url[181:]) # check dates in url
