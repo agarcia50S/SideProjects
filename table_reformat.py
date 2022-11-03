@@ -1,7 +1,6 @@
 #%%
 import pandas as pd
 import xlrd
-from openpyxl import load_workbook
 
 def get_sheet_names_xls(filepath):
     xls = xlrd.open_workbook(filepath, on_demand=True)
