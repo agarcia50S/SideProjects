@@ -49,6 +49,14 @@ def back_month(dt_date, back=1):
         return (month - back + 12), day, dt_date.year - 1
 
 def get_sheet_names_xlsx(filepath):
+    '''
+    passes a given file path into load_workbook to instantiate
+    an ExcelReader object. 
+    RETURNS sheetnames attr which is list of sheet names
+
+    filepath -- full path to Excel Workbook (i.e. xlsx file 
+                with multiple sheet)
+    '''
     wb = load_workbook(filepath, read_only=True, keep_links=False)
     return wb.sheetnames
 
