@@ -1,6 +1,7 @@
 #%%
 import pandas as pd
 import random
+from article_retrival_bot import get_sheet_names_xlsx
 
 def make_row_as_header(df, row):
     '''
@@ -68,34 +69,40 @@ def redact_links(col):
 
 #%%
 path = 'C:/Users/agarc/AbbyCode/data/'
-og = pd.read_excel(path+'unedited_trade_log.xls', sheet_name='April')
-og.head()
+sheet_names = get_sheet_names_xlsx(path + 'unedited_trade_log.xls')
 
-# %%
-# storing row 0 for later use
-row_0 = pd.DataFrame(og.iloc[[0]])
+with pd.ExcelWriter(path + 'redacted_.xlsx') as writer:
+    for name in sheet_names:
+        og = pd.read_excel(path+'unedited_trade_log.xls', sheet_name=name)
 
-# remove row 0 for easier wrangling
-work_df = og.drop(index=0)
-work_df.head()
+        # storing row 0 for later use
+        row_0 = pd.DataFrame(og.iloc[[0]])
 
-# %%
+        # remove row 0 for easier wrangling
+        work_df = og.drop(index=0)
 
-# replace confidential data with redacted data
-work_df['Unnamed: 4'] = redact_ticker_col(work_df['Unnamed: 4'])
-work_df['Unnamed: 1'] = redact_names(work_df['Unnamed: 1'])
-work_df['Unnamed: 7'] = redact_links(work_df['Unnamed: 7'])
-work_df.head()
+        try:
+            # replace confidential data with redacted data
+            work_df['Unnamed: 7'] = redact_links(work_df['Unnamed: 7'])
+            work_df['Unnamed: 4'] = redact_ticker_col(work_df['Unnamed: 4'])
+            work_df['Unnamed: 1'] = redact_names(work_df['Unnamed: 1'])
+        except KeyError as ex:
+            if len(og.columns) > 1:
+                print('DataFrame has neither ticker nor link columns; only name column will be redacted.')
+                work_df['Unnamed: 1'] = redact_names(work_df[og.columns[1]]) # header 'Unnamed: 1'
+            else:
+                print('Header Issue: Either none of the columns exist or the header names have been changed from default.')
+                print('Ending Program...')
+                break
 
-# %%
-# add row 0 back to main df
-concated = pd.concat([row_0, work_df])
+        # add row 0 back to main df
+        concated = pd.concat([row_0, work_df])
 
-# name col headers 1-6 "nan" to match original file's table structure
-new_headers = [None if 'Unnamed' in header else header for header in concated.columns]
-concated.columns = new_headers
+        # name col headers 1-6 "nan" to match original file's table structure
+        new_headers = [None if 'Unnamed' in header else header for header in concated.columns]
+        concated.columns = new_headers
+        concated.to_excel(writer, sheet_name=name, index=False)
 
-concated.head()
 
 # %%
 concated.to_excel(path + 'test_alpha.xlsx', index=False)
