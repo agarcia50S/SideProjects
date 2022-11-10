@@ -1,7 +1,7 @@
 #%%
 import pandas as pd
 import random
-from article_retrival_bot import get_sheet_names_xlsx
+from table_reformat import get_sheet_names_xls
 
 def make_row_as_header(df, row):
     '''
@@ -69,7 +69,7 @@ def redact_links(col):
 
 #%%
 path = 'C:/Users/agarc/AbbyCode/data/'
-sheet_names = get_sheet_names_xlsx(path + 'unedited_trade_log.xls')
+sheet_names = get_sheet_names_xls(path + 'unedited_trade_log.xls')
 
 with pd.ExcelWriter(path + 'redacted_.xlsx') as writer:
     for name in sheet_names:
