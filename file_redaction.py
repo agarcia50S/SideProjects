@@ -58,20 +58,12 @@ def redact_names(col):
     name_map = {name: redact_string(name) if type(name) == str else name for name in col.unique()}
     return col.apply(lambda x: name_map[x])
 
-def redact_links(col):
-    '''
-    Iterates over passed column via list comprehension, adding redacted
-    link if value is string type.
-
-    col -- column with links as string type values 
-    '''
-    return ['https://'+redact_string(link, start=97, stop=122) if type(link) == str else link for link in col]
 
 #%%
 path = 'C:/Users/agarc/AbbyCode/data/'
 sheet_names = get_sheet_names_xls(path + 'unedited_trade_log.xls')
 
-with pd.ExcelWriter(path + 'redacted_.xlsx') as writer:
+with pd.ExcelWriter(path + 'redacted_logs.xlsx') as writer:
     for name in sheet_names:
         og = pd.read_excel(path+'unedited_trade_log.xls', sheet_name=name)
 
@@ -83,12 +75,11 @@ with pd.ExcelWriter(path + 'redacted_.xlsx') as writer:
 
         try:
             # replace confidential data with redacted data
-            work_df['Unnamed: 7'] = redact_links(work_df['Unnamed: 7'])
             work_df['Unnamed: 4'] = redact_ticker_col(work_df['Unnamed: 4'])
             work_df['Unnamed: 1'] = redact_names(work_df['Unnamed: 1'])
         except KeyError as ex:
             if len(og.columns) > 1:
-                print('DataFrame has neither ticker nor link columns; only name column will be redacted.')
+                print('DataFrame has no ticker column; only name column will be redacted.')
                 work_df['Unnamed: 1'] = redact_names(work_df[og.columns[1]]) # header 'Unnamed: 1'
             else:
                 print('Header Issue: Either none of the columns exist or the header names have been changed from default.')
